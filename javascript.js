@@ -77,9 +77,14 @@ const registroCarrito = ()=>{
     })     
 
     $items.appendChild($fragment)
+    console.log(carrito)
+    pintarCarrito()
 }
 
-    
+const pintarCarrito = ()=>{
+    $footer.innerHTML = ''    
+    // if()
+} 
 
 
 
@@ -90,6 +95,7 @@ const registroCarrito = ()=>{
 
 
 
+/* prueba */
 
 
 
