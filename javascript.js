@@ -3,7 +3,7 @@ const $items = document.getElementById('items')
 const $footer = document.getElementById('footer')
 
 const $templateCarrito = document.getElementById('template-carrito').content
-const $templateFooter = document.getElementById('template-carrito').content
+const $templateFooter = document.getElementById('template-footer').content
 const $template = document.getElementById('template-card').content
 const $fragment = document.createDocumentFragment()
 let carrito = {}
@@ -77,13 +77,26 @@ const registroCarrito = ()=>{
     })     
 
     $items.appendChild($fragment)
-    console.log(carrito)
+    // console.log(carrito)
     pintarCarrito()
 }
 
 const pintarCarrito = ()=>{
     $footer.innerHTML = ''    
-    // if()
+    if(Object.values(carrito).length === 0){
+        $footer.innerHTML = `
+        <th scope="row" colspan="5">Carrito vacion</th> 
+        `
+    }
+
+    const cantidadTotal = Object.values(carrito).reduce((acumulador, {cantidad})=> acumulador + cantidad , 0)
+    const precioTotal =  Object.values(carrito).reduce((acumulador, {cantidad, precio})=> acumulador + precio * cantidad ,0)
+    $templateFooter.querySelectorAll('td')[0].textContent = cantidadTotal
+    $templateFooter.querySelector('span').textContent = precioTotal
+
+    const clone = $templateFooter.cloneNode(true)
+    $fragment.appendChild(clone)
+    $footer.appendChild($fragment)    
 } 
 
 
