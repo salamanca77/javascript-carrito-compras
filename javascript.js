@@ -6,6 +6,7 @@ const $templateCarrito = document.getElementById('template-carrito').content
 const $templateFooter = document.getElementById('template-footer').content
 const $template = document.getElementById('template-card').content
 const $fragment = document.createDocumentFragment()
+
 let carrito = {}
 
 const fetchData = async ()=>{
@@ -18,9 +19,14 @@ const fetchData = async ()=>{
     }
 }
 
+$items.addEventListener('click',e =>{
+    btnAccion(e)
+})
+
 document.addEventListener('DOMContentLoaded', ()=>{
     fetchData()
 })
+
 
 const render = (productos) =>{
     productos.forEach((producto) => {
@@ -68,8 +74,8 @@ const registroCarrito = ()=>{
         $templateCarrito.querySelector('th').textContent = producto.id
         $templateCarrito.querySelectorAll('td')[0].textContent = producto.title
         $templateCarrito.querySelectorAll('td')[1].textContent = producto.cantidad
-        $templateCarrito.querySelector('.btn-info').textContent = producto.id
-        $templateCarrito.querySelector('.btn-danger').textContent = producto.id
+        $templateCarrito.querySelector('.btn-info').dataset.id = producto.id
+        $templateCarrito.querySelector('.btn-danger').dataset.id = producto.id
         $templateCarrito.querySelector('span').textContent = producto.cantidad * producto.precio
 
         $clone = $templateCarrito.cloneNode(true)
@@ -83,10 +89,11 @@ const registroCarrito = ()=>{
 
 const pintarCarrito = ()=>{
     $footer.innerHTML = ''    
-    if(Object.values(carrito).length === 0){
+    if(Object.keys(carrito).length === 0){
         $footer.innerHTML = `
-        <th scope="row" colspan="5">Carrito vacion</th> 
+        <th scope="row" colspan="5">Carrito vacio</th> 
         `
+        return
     }
 
     const cantidadTotal = Object.values(carrito).reduce((acumulador, {cantidad})=> acumulador + cantidad , 0)
@@ -96,9 +103,35 @@ const pintarCarrito = ()=>{
 
     const clone = $templateFooter.cloneNode(true)
     $fragment.appendChild(clone)
-    $footer.appendChild($fragment)    
+    $footer.appendChild($fragment)
+    
+    const vaciarCarrito = document.querySelector('#vaciar-carrito')
+    vaciarCarrito.addEventListener('click',()=>{
+        carrito = {}
+        registroCarrito()        
+    })
 } 
 
+const btnAccion = (e)=>{
+    if(e.target.classList.contains('btn-info')){
+        const articulo = carrito[e.target.dataset.id]
+        articulo.cantidad = carrito[e.target.dataset.id].cantidad + 1 
+        carrito[e.target.dataset.id] = {...articulo}
+        registroCarrito()        
+    }
+
+    if(e.target.classList.contains('btn-danger')){
+
+        const articulo = carrito[e.target.dataset.id]
+        articulo.cantidad = carrito[e.target.dataset.id].cantidad - 1 
+        if(articulo.cantidad === 0){
+            delete carrito[e.target.dataset.id]
+        }
+        registroCarrito()         
+    }
+
+    e.stopPropagation()
+}
 
 
 
@@ -107,8 +140,6 @@ const pintarCarrito = ()=>{
 
 
 
-
-/* prueba */
 
 
 
