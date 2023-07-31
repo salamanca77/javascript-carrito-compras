@@ -25,6 +25,10 @@ $items.addEventListener('click',e =>{
 
 document.addEventListener('DOMContentLoaded', ()=>{
     fetchData()
+    if(localStorage.getItem('carrito')){
+        carrito = JSON.parse(localStorage.getItem('carrito'))
+        pintarCarrito()
+    }
 })
 
 
@@ -65,10 +69,10 @@ const setCarrito = (objeto)=>{
     }
 
     carrito[producto.id] = {...producto}
-    registroCarrito()
+    pintarCarrito()
 }
 
-const registroCarrito = ()=>{
+const pintarCarrito = ()=>{
     $items.innerHTML = ''
     Object.values(carrito).forEach(producto =>{
         $templateCarrito.querySelector('th').textContent = producto.id
@@ -83,11 +87,11 @@ const registroCarrito = ()=>{
     })     
 
     $items.appendChild($fragment)
-    // console.log(carrito)
-    pintarCarrito()
+    pintarFooter()
+    localStorage.setItem('carrito', JSON.stringify(carrito))
 }
 
-const pintarCarrito = ()=>{
+const pintarFooter = ()=>{
     $footer.innerHTML = ''    
     if(Object.keys(carrito).length === 0){
         $footer.innerHTML = `
@@ -106,9 +110,10 @@ const pintarCarrito = ()=>{
     $footer.appendChild($fragment)
     
     const vaciarCarrito = document.querySelector('#vaciar-carrito')
+
     vaciarCarrito.addEventListener('click',()=>{
         carrito = {}
-        registroCarrito()        
+        pintarCarrito()        
     })
 } 
 
@@ -117,7 +122,7 @@ const btnAccion = (e)=>{
         const articulo = carrito[e.target.dataset.id]
         articulo.cantidad = carrito[e.target.dataset.id].cantidad + 1 
         carrito[e.target.dataset.id] = {...articulo}
-        registroCarrito()        
+        pintarCarrito()        
     }
 
     if(e.target.classList.contains('btn-danger')){
@@ -127,7 +132,7 @@ const btnAccion = (e)=>{
         if(articulo.cantidad === 0){
             delete carrito[e.target.dataset.id]
         }
-        registroCarrito()         
+        pintarCarrito()         
     }
 
     e.stopPropagation()
